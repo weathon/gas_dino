@@ -1,0 +1,11 @@
+{"time":"2024-10-10T18:04:50.035709586-07:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-10-10T18:04:50.035747806-07:00","level":"INFO","msg":"created symlink","path":"/home/wg25r/gas_dino/wandb/run-20241010_180450-fsjsu6do/logs/debug-core.log"}
+{"time":"2024-10-10T18:04:50.035874902-07:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-10-10T18:04:50.035889674-07:00","level":"INFO","msg":"created symlink","path":"/home/wg25r/gas_dino/wandb/run-20241010_180450-fsjsu6do/logs/debug-core.log"}
+{"time":"2024-10-10T18:04:50.04682977-07:00","level":"INFO","msg":"created new stream","id":"fsjsu6do"}
+{"time":"2024-10-10T18:04:50.046872439-07:00","level":"INFO","msg":"stream: started","id":"fsjsu6do"}
+{"time":"2024-10-10T18:04:50.046927887-07:00","level":"INFO","msg":"sender: started","stream_id":{"value":"fsjsu6do"}}
+{"time":"2024-10-10T18:04:50.046955929-07:00","level":"INFO","msg":"handler: started","stream_id":{"value":"fsjsu6do"}}
+{"time":"2024-10-10T18:04:50.046897994-07:00","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"fsjsu6do"}}
+{"time":"2024-10-10T18:04:50.341709751-07:00","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-10-10T18:04:50.342848406-07:00","level":"INFO","msg":"Starting system monitor"}
