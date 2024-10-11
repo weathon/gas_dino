@@ -255,7 +255,7 @@ wandb.init(config={
 loss_fn = iou_loss
 epoch = 0
 import tqdm
-progress = tqdm.tqdm(range(200))
+progress = tqdm.tqdm(range(100))
 while 1:
     for i, (X, Y, ROI) in enumerate(train_dataloader):
         if i%500 == 0:
@@ -294,7 +294,7 @@ while 1:
                 mymodel.train()
                 epoch += 1
             # zero the bar
-            progress = tqdm.tqdm(range(200))
+            progress = tqdm.tqdm(range(100))
         progress.update(1)
 
             
