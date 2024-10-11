@@ -1,4 +1,0 @@
-/home/wg25r/.local/lib/python3.10/site-packages/torch/optim/lr_scheduler.py:216: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
-  warnings.warn(
-Val loss 0.9873235056429733 Val iou tensor(0.0283, device='cuda:0')
-Val loss 0.9796148700478636 Val iou tensor(0.0079, device='cuda:0')
