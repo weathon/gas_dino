@@ -1,0 +1,10 @@
+/home/wg25r/.local/lib/python3.10/site-packages/torch/optim/lr_scheduler.py:216: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(
+Traceback (most recent call last):
+  File "/home/wg25r/gas_dino/main.py", line 266, in <module>
+    Y_val = Y_val.cuda().float() * (ROI_val.cuda().float() > 0)
+RuntimeError: The size of tensor a (112) must match the size of tensor b (3) at non-singleton dimension 3
+Traceback (most recent call last):
+  File "/home/wg25r/gas_dino/main.py", line 266, in <module>
+    Y_val = Y_val.cuda().float() * (ROI_val.cuda().float() > 0)
+RuntimeError: The size of tensor a (112) must match the size of tensor b (3) at non-singleton dimension 3

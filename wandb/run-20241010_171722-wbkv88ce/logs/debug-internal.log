@@ -1,0 +1,18 @@
+{"time":"2024-10-10T17:17:22.292591656-07:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-10-10T17:17:22.292608516-07:00","level":"INFO","msg":"created symlink","path":"/home/wg25r/gas_dino/wandb/run-20241010_171722-wbkv88ce/logs/debug-core.log"}
+{"time":"2024-10-10T17:17:22.292657939-07:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-10-10T17:17:22.292664068-07:00","level":"INFO","msg":"created symlink","path":"/home/wg25r/gas_dino/wandb/run-20241010_171722-wbkv88ce/logs/debug-core.log"}
+{"time":"2024-10-10T17:17:22.298205184-07:00","level":"INFO","msg":"created new stream","id":"wbkv88ce"}
+{"time":"2024-10-10T17:17:22.298222337-07:00","level":"INFO","msg":"stream: started","id":"wbkv88ce"}
+{"time":"2024-10-10T17:17:22.298244923-07:00","level":"INFO","msg":"handler: started","stream_id":{"value":"wbkv88ce"}}
+{"time":"2024-10-10T17:17:22.298289299-07:00","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"wbkv88ce"}}
+{"time":"2024-10-10T17:17:22.298343154-07:00","level":"INFO","msg":"sender: started","stream_id":{"value":"wbkv88ce"}}
+{"time":"2024-10-10T17:17:22.580250161-07:00","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-10-10T17:17:22.582259841-07:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-10-10T17:17:48.771584504-07:00","level":"INFO","msg":"stream: closing","id":"wbkv88ce"}
+{"time":"2024-10-10T17:17:48.771682331-07:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-10-10T17:17:48.772769152-07:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-10-10T17:17:49.633420878-07:00","level":"INFO","msg":"handler: closed","stream_id":{"value":"wbkv88ce"}}
+{"time":"2024-10-10T17:17:49.633519141-07:00","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"wbkv88ce"}}
+{"time":"2024-10-10T17:17:49.633535187-07:00","level":"INFO","msg":"sender: closed","stream_id":{"value":"wbkv88ce"}}
+{"time":"2024-10-10T17:17:49.633698725-07:00","level":"INFO","msg":"stream: closed","id":"wbkv88ce"}

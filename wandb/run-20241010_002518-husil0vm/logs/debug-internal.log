@@ -1,0 +1,18 @@
+{"time":"2024-10-10T00:25:18.358189104-07:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-10-10T00:25:18.358215065-07:00","level":"INFO","msg":"created symlink","path":"/home/wg25r/gas_dino/wandb/run-20241010_002518-husil0vm/logs/debug-core.log"}
+{"time":"2024-10-10T00:25:18.358283747-07:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-10-10T00:25:18.358289928-07:00","level":"INFO","msg":"created symlink","path":"/home/wg25r/gas_dino/wandb/run-20241010_002518-husil0vm/logs/debug-core.log"}
+{"time":"2024-10-10T00:25:18.368957638-07:00","level":"INFO","msg":"created new stream","id":"husil0vm"}
+{"time":"2024-10-10T00:25:18.369019161-07:00","level":"INFO","msg":"stream: started","id":"husil0vm"}
+{"time":"2024-10-10T00:25:18.369091342-07:00","level":"INFO","msg":"sender: started","stream_id":{"value":"husil0vm"}}
+{"time":"2024-10-10T00:25:18.369033558-07:00","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"husil0vm"}}
+{"time":"2024-10-10T00:25:18.369174375-07:00","level":"INFO","msg":"handler: started","stream_id":{"value":"husil0vm"}}
+{"time":"2024-10-10T00:25:18.60733817-07:00","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-10-10T00:25:18.609277015-07:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-10-10T00:59:13.090579046-07:00","level":"INFO","msg":"stream: closing","id":"husil0vm"}
+{"time":"2024-10-10T00:59:13.090625486-07:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-10-10T00:59:13.091198026-07:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-10-10T00:59:14.635934089-07:00","level":"INFO","msg":"handler: closed","stream_id":{"value":"husil0vm"}}
+{"time":"2024-10-10T00:59:14.636018209-07:00","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"husil0vm"}}
+{"time":"2024-10-10T00:59:14.636034238-07:00","level":"INFO","msg":"sender: closed","stream_id":{"value":"husil0vm"}}
+{"time":"2024-10-10T00:59:14.636183438-07:00","level":"INFO","msg":"stream: closed","id":"husil0vm"}

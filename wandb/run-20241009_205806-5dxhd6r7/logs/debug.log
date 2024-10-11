@@ -144,3 +144,15 @@ config: {'lr': 3e-05, 'batch_size': 8}
 2024-10-09 21:06:47,828 INFO    MainThread:1932728 [wandb_init.py:_resume_backend():448] resuming backend
 2024-10-09 21:06:47,842 INFO    MainThread:1932728 [jupyter.py:save_ipynb():387] not saving jupyter notebook
 2024-10-09 21:06:47,842 INFO    MainThread:1932728 [wandb_init.py:_pause_backend():443] pausing backend
+2024-10-09 21:08:08,150 INFO    MainThread:1932728 [wandb_init.py:_resume_backend():448] resuming backend
+2024-10-09 21:08:08,162 INFO    MainThread:1932728 [jupyter.py:save_ipynb():387] not saving jupyter notebook
+2024-10-09 21:08:08,162 INFO    MainThread:1932728 [wandb_init.py:_pause_backend():443] pausing backend
+2024-10-09 21:08:08,491 INFO    MainThread:1932728 [wandb_init.py:_resume_backend():448] resuming backend
+2024-10-09 21:08:08,498 INFO    MainThread:1932728 [jupyter.py:save_ipynb():387] not saving jupyter notebook
+2024-10-09 21:08:08,498 INFO    MainThread:1932728 [wandb_init.py:_pause_backend():443] pausing backend
+2024-10-09 21:08:26,954 INFO    MainThread:1932728 [wandb_init.py:_resume_backend():448] resuming backend
+2024-10-09 21:08:26,981 INFO    MainThread:1932728 [jupyter.py:save_ipynb():387] not saving jupyter notebook
+2024-10-09 21:08:26,982 INFO    MainThread:1932728 [wandb_init.py:_pause_backend():443] pausing backend
+2024-10-09 21:09:26,073 INFO    MainThread:1932728 [wandb_init.py:_resume_backend():448] resuming backend
+2024-10-09 21:09:26,080 INFO    MainThread:1932728 [jupyter.py:save_ipynb():387] not saving jupyter notebook
+2024-10-09 21:09:26,081 INFO    MainThread:1932728 [wandb_init.py:_pause_backend():443] pausing backend

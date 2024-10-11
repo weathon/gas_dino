@@ -1,0 +1,62 @@
+/home/wg25r/.local/lib/python3.10/site-packages/torch/optim/lr_scheduler.py:216: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(
+Traceback (most recent call last):
+  File "/home/wg25r/gas_dino/main.py", line 271, in <module>
+    pred = mymodel(X_val[:,:3], X_val[:,3:6], X_val[:,6:]) * (ROI_val.cuda().float().unsqueeze(1) > 0)
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/parallel/data_parallel.py", line 184, in forward
+    return self.module(*inputs[0], **module_kwargs[0])
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/wg25r/gas_dino/main.py", line 212, in forward
+    long_bg = self.backbone.get_intermediate_layers(long_bg)[0][:,1:,:]
+  File "/home/wg25r/.cache/torch/hub/facebookresearch_dino_main/vision_transformer.py", line 230, in get_intermediate_layers
+    x = blk(x)
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/wg25r/.cache/torch/hub/facebookresearch_dino_main/vision_transformer.py", line 108, in forward
+    y, attn = self.attn(self.norm1(x))
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/wg25r/.cache/torch/hub/facebookresearch_dino_main/vision_transformer.py", line 85, in forward
+    attn = (q @ k.transpose(-2, -1)) * self.scale
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 14.08 GiB. GPU 0 has a total capacity of 47.53 GiB of which 13.22 GiB is free. Process 3411902 has 31.42 GiB memory in use. Including non-PyTorch memory, this process has 2.87 GiB memory in use. Of the allocated memory 2.54 GiB is allocated by PyTorch, and 18.12 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+Traceback (most recent call last):
+  File "/home/wg25r/gas_dino/main.py", line 271, in <module>
+    pred = mymodel(X_val[:,:3], X_val[:,3:6], X_val[:,6:]) * (ROI_val.cuda().float().unsqueeze(1) > 0)
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/parallel/data_parallel.py", line 184, in forward
+    return self.module(*inputs[0], **module_kwargs[0])
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/wg25r/gas_dino/main.py", line 212, in forward
+    long_bg = self.backbone.get_intermediate_layers(long_bg)[0][:,1:,:]
+  File "/home/wg25r/.cache/torch/hub/facebookresearch_dino_main/vision_transformer.py", line 230, in get_intermediate_layers
+    x = blk(x)
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/wg25r/.cache/torch/hub/facebookresearch_dino_main/vision_transformer.py", line 108, in forward
+    y, attn = self.attn(self.norm1(x))
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/wg25r/.cache/torch/hub/facebookresearch_dino_main/vision_transformer.py", line 85, in forward
+    attn = (q @ k.transpose(-2, -1)) * self.scale
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 14.08 GiB. GPU 0 has a total capacity of 47.53 GiB of which 13.22 GiB is free. Process 3411902 has 31.42 GiB memory in use. Including non-PyTorch memory, this process has 2.87 GiB memory in use. Of the allocated memory 2.54 GiB is allocated by PyTorch, and 18.12 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)

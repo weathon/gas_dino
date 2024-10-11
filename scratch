@@ -1,0 +1,52 @@
+class BCA_lite(nn.Module):
+    """
+    Background-CurrentFrame Attention
+    """
+    def __init__(self, dim=384):
+        super(BCA_lite, self).__init__()
+        self.dim = dim
+        self.key_projection = nn.Linear(dim, dim)
+        self.query_projection = nn.Linear(dim, dim)
+        self.value_projection = nn.Linear(dim * 2, dim)
+        self.mlp = nn.Sequential(
+            nn.Linear(2 * dim, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, dim)
+        )
+        self.norm1 = nn.LayerNorm(dim)
+        self.norm2 = nn.LayerNorm(dim)
+    
+    def forward(self, long_background, short_background, current_frame):
+        """
+        long_background: torch.Tensor, shape (batch, L, dim)
+        short_background: torch.Tensor, shape (batch, L, dim)
+        current_frame: torch.Tensor, shape (batch, L, dim)
+        """
+
+        # long background attention with frame
+        key = self.key_projection(long_background)
+        query = self.query_projection(current_frame)
+        value = self.value_projection(torch.concatenate([long_background, current_frame], dim=-1))
+
+        attn_score = attn_score = torch.einsum('bqe,bke->bqk', query, key) / np.sqrt(self.dim)
+        attn_score = F.softmax(attn_score, dim=-1)
+        attn_output = torch.einsum('bpq,bqe->bpe', attn_score, value)
+        long_attn_output = self.norm1(attn_output + current_frame)
+
+        # short background attention with frame
+        key = self.key_projection(short_background)
+        query = self.query_projection(current_frame)
+        value = self.value_projection(torch.concatenate([short_background, current_frame], dim=-1))
+
+        attn_score = attn_score = torch.einsum('bqe,bke->bqk', query, key) / np.sqrt(self.dim)
+        attn_score = F.softmax(attn_score, dim=-1)
+        attn_output = torch.einsum('bpq,bqe->bpe', attn_score, value)
+        short_attn_output = self.norm1(attn_output + long_attn_output)
+
+        # mlp
+        mlp_output = self.mlp(torch.concatenate([short_attn_output, current_frame], dim=-1))
+        mlp_output = self.norm2(mlp_output + short_attn_output)
+        return mlp_output
+    
+        
+        

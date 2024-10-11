@@ -1,0 +1,19 @@
+{"time":"2024-10-10T17:00:15.450712005-07:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-10-10T17:00:15.450729036-07:00","level":"INFO","msg":"created symlink","path":"/home/wg25r/gas_dino/wandb/run-20241010_170015-784gx3a3/logs/debug-core.log"}
+{"time":"2024-10-10T17:00:15.450787262-07:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-10-10T17:00:15.450793294-07:00","level":"INFO","msg":"created symlink","path":"/home/wg25r/gas_dino/wandb/run-20241010_170015-784gx3a3/logs/debug-core.log"}
+{"time":"2024-10-10T17:00:15.458061813-07:00","level":"INFO","msg":"created new stream","id":"784gx3a3"}
+{"time":"2024-10-10T17:00:15.458080261-07:00","level":"INFO","msg":"stream: started","id":"784gx3a3"}
+{"time":"2024-10-10T17:00:15.458103535-07:00","level":"INFO","msg":"sender: started","stream_id":{"value":"784gx3a3"}}
+{"time":"2024-10-10T17:00:15.458099369-07:00","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"784gx3a3"}}
+{"time":"2024-10-10T17:00:15.458220606-07:00","level":"INFO","msg":"handler: started","stream_id":{"value":"784gx3a3"}}
+{"time":"2024-10-10T17:00:15.73263002-07:00","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-10-10T17:00:15.734067085-07:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-10-10T17:09:30.908326136-07:00","level":"INFO","msg":"api: retrying HTTP request, no error or response"}
+{"time":"2024-10-10T17:12:20.651869794-07:00","level":"INFO","msg":"stream: closing","id":"784gx3a3"}
+{"time":"2024-10-10T17:12:20.651937245-07:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-10-10T17:12:20.652929235-07:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-10-10T17:12:21.265859736-07:00","level":"INFO","msg":"handler: closed","stream_id":{"value":"784gx3a3"}}
+{"time":"2024-10-10T17:12:21.265908601-07:00","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"784gx3a3"}}
+{"time":"2024-10-10T17:12:21.26593391-07:00","level":"INFO","msg":"sender: closed","stream_id":{"value":"784gx3a3"}}
+{"time":"2024-10-10T17:12:21.26598179-07:00","level":"INFO","msg":"stream: closed","id":"784gx3a3"}

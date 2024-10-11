@@ -1,0 +1,18 @@
+{"time":"2024-10-10T17:19:06.718083063-07:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-10-10T17:19:06.718121835-07:00","level":"INFO","msg":"created symlink","path":"/home/wg25r/gas_dino/wandb/run-20241010_171906-106pesbk/logs/debug-core.log"}
+{"time":"2024-10-10T17:19:06.718248939-07:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-10-10T17:19:06.718263849-07:00","level":"INFO","msg":"created symlink","path":"/home/wg25r/gas_dino/wandb/run-20241010_171906-106pesbk/logs/debug-core.log"}
+{"time":"2024-10-10T17:19:06.729025869-07:00","level":"INFO","msg":"created new stream","id":"106pesbk"}
+{"time":"2024-10-10T17:19:06.729063334-07:00","level":"INFO","msg":"stream: started","id":"106pesbk"}
+{"time":"2024-10-10T17:19:06.729090188-07:00","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"106pesbk"}}
+{"time":"2024-10-10T17:19:06.729120642-07:00","level":"INFO","msg":"sender: started","stream_id":{"value":"106pesbk"}}
+{"time":"2024-10-10T17:19:06.729097373-07:00","level":"INFO","msg":"handler: started","stream_id":{"value":"106pesbk"}}
+{"time":"2024-10-10T17:19:07.014996388-07:00","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-10-10T17:19:07.017220264-07:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-10-10T17:19:34.76872171-07:00","level":"INFO","msg":"stream: closing","id":"106pesbk"}
+{"time":"2024-10-10T17:19:34.768808649-07:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-10-10T17:19:34.769994389-07:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-10-10T17:19:35.416875277-07:00","level":"INFO","msg":"handler: closed","stream_id":{"value":"106pesbk"}}
+{"time":"2024-10-10T17:19:35.416923055-07:00","level":"INFO","msg":"sender: closed","stream_id":{"value":"106pesbk"}}
+{"time":"2024-10-10T17:19:35.416918886-07:00","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"106pesbk"}}
+{"time":"2024-10-10T17:19:35.418735467-07:00","level":"INFO","msg":"stream: closed","id":"106pesbk"}

@@ -1,0 +1,12 @@
+0it [00:00, ?it/s]/home/wg25r/.local/lib/python3.10/site-packages/torch/optim/lr_scheduler.py:216: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(
+Val loss 0.996794456243515 Val iou tensor(0.0052, device='cuda:0')
+0it [01:01, ?it/s]
+Traceback (most recent call last):
+  File "/home/wg25r/gas_dino/main.py", line 298, in <module>
+    ROI = ROI.cuda().float()
+AttributeError: 'numpy.ndarray' object has no attribute 'cuda'
+Traceback (most recent call last):
+  File "/home/wg25r/gas_dino/main.py", line 298, in <module>
+    ROI = ROI.cuda().float()
+AttributeError: 'numpy.ndarray' object has no attribute 'cuda'

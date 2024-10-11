@@ -1,0 +1,18 @@
+{"time":"2024-10-10T17:29:24.134940108-07:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-10-10T17:29:24.13497981-07:00","level":"INFO","msg":"created symlink","path":"/home/wg25r/gas_dino/wandb/run-20241010_172924-ed302w30/logs/debug-core.log"}
+{"time":"2024-10-10T17:29:24.135105863-07:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-10-10T17:29:24.135120974-07:00","level":"INFO","msg":"created symlink","path":"/home/wg25r/gas_dino/wandb/run-20241010_172924-ed302w30/logs/debug-core.log"}
+{"time":"2024-10-10T17:29:24.14723342-07:00","level":"INFO","msg":"created new stream","id":"ed302w30"}
+{"time":"2024-10-10T17:29:24.147386021-07:00","level":"INFO","msg":"stream: started","id":"ed302w30"}
+{"time":"2024-10-10T17:29:24.147364187-07:00","level":"INFO","msg":"handler: started","stream_id":{"value":"ed302w30"}}
+{"time":"2024-10-10T17:29:24.147448041-07:00","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"ed302w30"}}
+{"time":"2024-10-10T17:29:24.14741972-07:00","level":"INFO","msg":"sender: started","stream_id":{"value":"ed302w30"}}
+{"time":"2024-10-10T17:29:24.447579137-07:00","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-10-10T17:29:24.449957771-07:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-10-10T17:29:29.741356479-07:00","level":"INFO","msg":"stream: closing","id":"ed302w30"}
+{"time":"2024-10-10T17:29:29.741409459-07:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-10-10T17:29:29.743017239-07:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-10-10T17:29:30.45599293-07:00","level":"INFO","msg":"handler: closed","stream_id":{"value":"ed302w30"}}
+{"time":"2024-10-10T17:29:30.456059119-07:00","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"ed302w30"}}
+{"time":"2024-10-10T17:29:30.456076779-07:00","level":"INFO","msg":"sender: closed","stream_id":{"value":"ed302w30"}}
+{"time":"2024-10-10T17:29:30.456216821-07:00","level":"INFO","msg":"stream: closed","id":"ed302w30"}

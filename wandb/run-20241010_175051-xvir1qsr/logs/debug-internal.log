@@ -1,0 +1,18 @@
+{"time":"2024-10-10T17:50:51.895604574-07:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-10-10T17:50:51.895643743-07:00","level":"INFO","msg":"created symlink","path":"/home/wg25r/gas_dino/wandb/run-20241010_175051-xvir1qsr/logs/debug-core.log"}
+{"time":"2024-10-10T17:50:51.895782915-07:00","level":"INFO","msg":"using version","core version":"0.18.1"}
+{"time":"2024-10-10T17:50:51.895797765-07:00","level":"INFO","msg":"created symlink","path":"/home/wg25r/gas_dino/wandb/run-20241010_175051-xvir1qsr/logs/debug-core.log"}
+{"time":"2024-10-10T17:50:51.905562526-07:00","level":"INFO","msg":"created new stream","id":"xvir1qsr"}
+{"time":"2024-10-10T17:50:51.90560657-07:00","level":"INFO","msg":"stream: started","id":"xvir1qsr"}
+{"time":"2024-10-10T17:50:51.905613861-07:00","level":"INFO","msg":"writer: Do: started","stream_id":{"value":"xvir1qsr"}}
+{"time":"2024-10-10T17:50:51.90565152-07:00","level":"INFO","msg":"sender: started","stream_id":{"value":"xvir1qsr"}}
+{"time":"2024-10-10T17:50:51.905710227-07:00","level":"INFO","msg":"handler: started","stream_id":{"value":"xvir1qsr"}}
+{"time":"2024-10-10T17:50:52.17056724-07:00","level":"INFO","msg":"wandb-core","!BADKEY":null}
+{"time":"2024-10-10T17:50:52.173879595-07:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2024-10-10T18:01:15.592261042-07:00","level":"INFO","msg":"stream: closing","id":"xvir1qsr"}
+{"time":"2024-10-10T18:01:15.592288372-07:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2024-10-10T18:01:15.59285824-07:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2024-10-10T18:01:16.255931771-07:00","level":"INFO","msg":"handler: closed","stream_id":{"value":"xvir1qsr"}}
+{"time":"2024-10-10T18:01:16.255990095-07:00","level":"INFO","msg":"writer: Close: closed","stream_id":{"value":"xvir1qsr"}}
+{"time":"2024-10-10T18:01:16.256002753-07:00","level":"INFO","msg":"sender: closed","stream_id":{"value":"xvir1qsr"}}
+{"time":"2024-10-10T18:01:16.256091387-07:00","level":"INFO","msg":"stream: closed","id":"xvir1qsr"}
