@@ -1,0 +1,13 @@
+Using cache found in /home/wg25r/.cache/torch/hub/facebookresearch_dino_main
+/home/wg25r/.local/lib/python3.10/site-packages/torch/nn/modules/transformer.py:307: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.self_attn.batch_first was not True(use batch_first for better inference performance)
+  warnings.warn(f"enable_nested_tensor is True, but self.use_nested_tensor is False because {why_not_sparsity_fast_path}")
+wandb: Using wandb-core as the SDK backend. Please refer to https://wandb.me/wandb-core for more information.
+wandb: Currently logged in as: wguo6358 (3dsmile). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.18.1
+wandb: Run data is saved locally in /home/wg25r/gas_dino/wandb/run-20241017_164839-kd2yc10r
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run legendary-river-361
+wandb: ⭐️ View project at https://wandb.ai/3dsmile/gas_dino
+wandb: 🚀 View run at https://wandb.ai/3dsmile/gas_dino/runs/kd2yc10r
+/home/wg25r/.local/lib/python3.10/site-packages/torch/optim/lr_scheduler.py:216: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(
