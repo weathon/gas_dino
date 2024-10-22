@@ -1,0 +1,37 @@
+
+Hint from user: I looked gradient and it is close to zero, maybe increase lr?
+Epoch 1 Val Loss 0.984 Val f1 0.025
+Epoch 1 Train Loss 1.0 Train f1 0.0
+Epoch 41 Val Loss 0.934 Val f1 0.494
+Epoch 41 Train Loss 0.817 Train f1 0.54
+
+Epoch 81 Val Loss 0.927 Val f1 0.731
+Epoch 81 Train Loss 0.786 Train f1 0.692
+Epoch 121 Val Loss 0.929 Val f1 0.77
+Epoch 121 Train Loss 0.771 Train f1 0.741
+Epoch 161 Val Loss 0.933 Val f1 0.768
+Epoch 161 Train Loss 0.768 Train f1 0.775
+Epoch 201 Val Loss 0.933 Val f1 0.766
+Epoch 201 Train Loss 0.765 Train f1 0.799
+Epoch 209 Val Loss 0.933 Val f1 0.761
+Epoch 209 Train Loss 0.765 Train f1 0.804
+Epoch 249 Val Loss 0.931 Val f1 0.8
+Epoch 249 Train Loss 0.764 Train f1 0.815
+Epoch 289 Val Loss 0.931 Val f1 0.743
+Epoch 289 Train Loss 0.761 Train f1 0.826
+Epoch 329 Val Loss 0.929 Val f1 0.793
+Epoch 329 Train Loss 0.761 Train f1 0.835
+Epoch 369 Val Loss 0.934 Val f1 0.794
+Epoch 369 Train Loss 0.761 Train f1 0.839
+Epoch 409 Val Loss 0.932 Val f1 0.782
+Epoch 409 Train Loss 0.76 Train f1 0.847
+Epoch 417 Val Loss 0.933 Val f1 0.794
+Epoch 417 Train Loss 0.771 Train f1 0.843
+Epoch 457 Val Loss 0.93 Val f1 0.796
+Epoch 457 Train Loss 0.757 Train f1 0.856
+Epoch 497 Val Loss 0.932 Val f1 0.797
+Epoch 497 Train Loss 0.756 Train f1 0.861
+Epoch 537 Val Loss 0.93 Val f1 0.799
+Epoch 537 Train Loss 0.759 Train f1 0.863
+Epoch 577 Val Loss 0.933 Val f1 0.79
+Epoch 577 Train Loss 0.759 Train f1 0.868

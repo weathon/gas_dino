@@ -1,0 +1,13 @@
+Using cache found in /home/wg25r/.cache/torch/hub/facebookresearch_dino_main
+Some weights of SegformerForSemanticSegmentation were not initialized from the model checkpoint at nvidia/segformer-b1-finetuned-ade-512-512 and are newly initialized: ['segformer.encoder.test.bias', 'segformer.encoder.test.weight']
+You should probably TRAIN this model on a down-stream task to be able to use it for predictions and inference.
+wandb: Using wandb-core as the SDK backend. Please refer to https://wandb.me/wandb-core for more information.
+wandb: Currently logged in as: wguo6358 (3dsmile). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.18.1
+wandb: Run data is saved locally in /home/wg25r/gas_dino/wandb/run-20241021_223720-78pg5nk0
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run wandering-mountain-501
+wandb: ⭐️ View project at https://wandb.ai/3dsmile/gas_dino
+wandb: 🚀 View run at https://wandb.ai/3dsmile/gas_dino/runs/78pg5nk0
+/home/wg25r/.local/lib/python3.10/site-packages/torch/optim/lr_scheduler.py:216: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn(

@@ -1,0 +1,12 @@
+
+User hint: seems like learning rate too low, try 3.5e-5
+Epoch 1 Val Loss 0.984 Val f1 0.0
+Epoch 1 Train Loss 1.0 Train f1 0.0
+Epoch 41 Val Loss 0.95 Val f1 0.257
+Epoch 41 Train Loss 0.859 Train f1 0.363
+Epoch 81 Val Loss 0.935 Val f1 0.621
+Epoch 81 Train Loss 0.809 Train f1 0.579
+Epoch 105 Val Loss 0.926 Val f1 0.654
+Epoch 105 Train Loss 0.8 Train f1 0.623
+Epoch 145 Val Loss 0.924 Val f1 0.642
+Epoch 145 Train Loss 0.794 Train f1 0.657

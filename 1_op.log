@@ -1,0 +1,18 @@
+
+
+Epoch 1 Val Loss 0.984 Val f1 0.003
+Epoch 1 Train Loss 1.0 Train f1 0.0
+Epoch 41 Val Loss 0.932 Val f1 0.708
+Epoch 41 Train Loss 0.803 Train f1 0.611
+Epoch 81 Val Loss 0.927 Val f1 0.798
+Epoch 81 Train Loss 0.771 Train f1 0.769
+Epoch 105 Val Loss 0.932 Val f1 0.788
+Epoch 105 Train Loss 0.766 Train f1 0.802
+Epoch 145 Val Loss 0.933 Val f1 0.781
+Epoch 145 Train Loss 0.763 Train f1 0.827
+Epoch 185 Val Loss 0.926 Val f1 0.814
+Epoch 185 Train Loss 0.76 Train f1 0.846
+Epoch 209 Val Loss 0.932 Val f1 0.78
+Epoch 209 Train Loss 0.761 Train f1 0.849
+Epoch 249 Val Loss 0.932 Val f1 0.779
+Epoch 249 Train Loss 0.759 Train f1 0.863
