@@ -36,6 +36,8 @@ parser.add_argument("--show_sample", action="store_true")
 parser.add_argument("--val_size", type=int, default=2048)
 parser.add_argument("--save_path", type=str, default=f"{random.randint(10000000,99999999)}.pth")
 parser.add_argument("--use_optical_flow", action="store_true")
+parser.add_argument("--strong_crop", action="store_true")
+
 args = parser.parse_args()
 os.environ['CUDA_VISIBLE_DEVICES'] = args.gpus
 print(f"Saving model checkpoints into {args.save_path}")
@@ -106,20 +108,21 @@ class MyDataset(torch.utils.data.Dataset):
             train_ = f.read().split("\n") 
 
         with open(f"{self.datapath}/val.txt") as f:
-            val_ = f.read().split("\n")
+            val_ = f.read().split("\n") 
 
         assert set(train_).intersection(set(val_)) == set(), "Train and Val overlap"
 
-        self.ignore_after = 40 
+        self.ignore_after = 40  
         self.space_trans = torchvision.transforms.v2.Compose([
-            torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomResizedCrop(args.image_size, scale=(0.8, 2))], p=args.base_aug_spice),
+            # torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomResizedCrop(args.image_size, scale=(1 - args.base_aug_spice/4, 2))], p=args.base_aug_spice),
+            torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomResizedCrop(args.image_size, scale=((0.1 if args.strong_crop else 0.8), 2))], p=args.base_aug_spice),
             torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomHorizontalFlip(0.5)], p=args.base_aug_spice),
             torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomRotation(50)], p=args.base_aug_spice), 
-            torchvision.transforms.v2.RandomApply( 
+            torchvision.transforms.v2.RandomApply(  
                 [torchvision.transforms.v2.ElasticTransform(alpha=50)], p=args.base_aug_spice 
             ),
-            torchvision.transforms.v2.RandomApply(
-                [torchvision.transforms.v2.RandomPerspective()], p=args.base_aug_spice
+            torchvision.transforms.v2.RandomApply( 
+                [torchvision.transforms.v2.RandomPerspective()], p=args.base_aug_spice 
             ),
             torchvision.transforms.v2.RandomApply( 
                 [torchvision.transforms.v2.RandomAffine(30,  scale=(0.8, 1.1))], p=args.base_aug_spice
@@ -144,7 +147,7 @@ class MyDataset(torch.utils.data.Dataset):
                 torchvision.transforms.v2.RandomApply([self.pan], p=0.1),
                 torchvision.transforms.v2.RandomApply(
                     [
-                        torchvision.transforms.v2.GaussianBlur(3, sigma=(0.1, 2.0))
+                        torchvision.transforms.v2.GaussianBlur(5, sigma=(0.1, 2.0))
                     ], 0.05
                 )
             ])
@@ -183,8 +186,9 @@ class MyDataset(torch.utils.data.Dataset):
         if args.use_optical_flow:
             flow = cv2.imread(f"{self.datapath}/flow/{filename}")
             flow = cv2.resize(flow, (args.image_size, args.image_size)) 
-        label = (label_ == 255) * 255.0
-        ROI =  (label_ != 85) * 255.0 
+        label = (label_ >= 250) * 255.0 # because there is resave so we need this
+        # ROI =  (label_ != 85) * 255.0 
+        ROI = (80 <= label_ <= 90) * 255.0
         ROI = cv2.resize(ROI, (args.image_size, args.image_size)).mean(2)[None,:,:]
         label = cv2.resize(label, (args.image_size, args.image_size))
 
@@ -499,7 +503,7 @@ class MyModel(nn.Module):
                     feature = torch.cat([current_frame, long_bg, short_bg], dim=1)
                     current_frame = self.backbone(feature).logits.squeeze(1).flatten(-2, -1)
                     current_frame = self.proj_early(current_frame).permute(0, 2, 1)
-                elif args.fusion == "slow":
+                elif args.fusion == "slow": 
                     current_frame = self.backbone(current_frame, long_bg, short_bg).logits.squeeze(1).flatten(-2, -1)
                     current_frame = self.proj_slow(current_frame).permute(0, 2, 1)
                 else:
@@ -673,7 +677,6 @@ while 1:
                 total_pred = []
                 total_Y = []
                 for X_val, Y_val, ROI_val, filenames in val_dataloader:
-                    print(1)
                     # print(X_val.shape, Y_val.shape, ROI_val.shape)
                     X_val = X_val.cuda().float() 
                     Y_val = Y_val.cuda().float() * (ROI_val.cuda().float() > 0) 
@@ -744,7 +747,7 @@ while 1:
         if i%1000 == 1: 
             grads, params = watch(mymodel)
             wandb.log({"grads": wandb.Histogram(grads.cpu().detach().numpy()), "params": wandb.Histogram(params.cpu().detach().numpy())})
-            write_log(f"Grad Mean: {grads.abs().mean()} Grad Std: {grads.std()} Param abs().: {params.abs().mean()} Param Std: {params.std()}") 
+            write_log(f"Grad Mean: {round(grads.abs().mean().item(), 4)} Grad Std: {round(grads.std().item(), 4)} Param abs().: {round(params.abs().mean().item(), 4)} Param Std: {round(params.std().item(), 4)}") 
             # write_log(f"Grad Mean: {grads.mean()} Grad Std: {grads.std()} Param Mean: {params.mean()} Param Std: {params.std()}")  wrong
         optimizer.step() 
         wandb.log({"loss": loss.item(), "acc": acc.float().mean().item(), "iou": iou.float(), "lr": optimizer.param_groups[0]["lr"]}) # cannot do iou mean here otherwise it average non overlapping area
