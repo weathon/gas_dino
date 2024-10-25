@@ -188,6 +188,8 @@ class MyDataset(torch.utils.data.Dataset):
             flow = cv2.resize(flow, (args.image_size, args.image_size)) 
         label = (label_ >= 250) * 255.0 # because there is resave so we need this
         # ROI =  (label_ != 85) * 255.0 
+        ROI = ((80 >= label) & (label >= 90)) * 255 #need it !=85
+
         ROI = (80 <= label_ <= 90) * 255.0
         ROI = cv2.resize(ROI, (args.image_size, args.image_size)).mean(2)[None,:,:]
         label = cv2.resize(label, (args.image_size, args.image_size))
