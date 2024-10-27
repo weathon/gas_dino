@@ -41,8 +41,11 @@ parser.add_argument("--data_path", type=str, default="/home/wg25r/fastdata/CDNet
 parser.add_argument("--single_bg", action="store_true")
 parser.add_argument("--long_name", type=str, default="long")
 parser.add_argument("--short_name", type=str, default="short")
-parser.add_argument("--bg_format", type=str, default="raw", choices=["raw", "differece"])
+parser.add_argument("--bg_format", type=str, default="raw", choices=["raw", "differece", ""])
+parser.add_argument("--panrotate", action="store_true")
 args = parser.parse_args()
+if args.bg_format == "":
+    args.bg_format = "raw"
 # args.num_workers = 50
 # args.gpu = 1
 # args.data_path = "/home/wg25r/fastdata/CDNet"
@@ -171,13 +174,16 @@ class MyDataset(torch.utils.data.Dataset):
             torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.GaussianBlur(3, sigma=(0.1, 2.0))], p=0.4)
         ])
         self.pancrop = torchvision.transforms.RandomResizedCrop(args.image_size, scale=(0.9, 1.1))
+        self.panrotate = torchvision.transforms.RandomRotation(20)
 
     def pan(self, img): 
         shifteds = []
-        for i in range(random.randint(10, 30)):
-            shift = random.randint(10, 30)
+        for i in range(random.randint(10, 60)):
+            shift = random.randint(20, 30)
             tmp = torch.roll(img, shifts=shift, dims=1) 
             tmp = self.pancrop(tmp)
+            if args.panrotate:
+                tmp = self.panrotate(tmp)
             shifteds.append(tmp)
         return torch.stack(shifteds).mean(0)
             
@@ -202,9 +208,9 @@ class MyDataset(torch.utils.data.Dataset):
         if args.bg_format == "difference":
             short_bg = current_frame - long_bg
             long_bg = current_frame - long_bg
-            short_bg = (short_bg - short_bg.min()) / (short_bg.max() - short_bg.min())
-            long_bg = (long_bg - long_bg.min()) / (long_bg.max() - long_bg.min())
-            
+            # short_bg = (short_bg - short_bg.min()) / (short_bg.max() - short_bg.min())
+            # long_bg = (long_bg - long_bg.min()) / (long_bg.max() - long_bg.min())
+
         label_ = cv2.imread(f"{self.datapath}/gt/{filename}")
         if args.use_optical_flow:
             flow = cv2.imread(f"{self.datapath}/flow/{filename}")
