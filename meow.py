@@ -41,12 +41,15 @@ parser.add_argument("--data_path", type=str, default="/home/wg25r/fastdata/CDNet
 parser.add_argument("--single_bg", action="store_true")
 parser.add_argument("--long_name", type=str, default="long")
 parser.add_argument("--short_name", type=str, default="short")
-parser.add_argument("--bg_format", type=str, default="raw", choices=["raw", "differece", ""])
+parser.add_argument("--bg_format", type=str, default="raw", choices=["raw", "difference", "None"])
+parser.add_argument("--texture", action="store_true")
 parser.add_argument("--panrotate", action="store_true")
+parser.add_argument("--only_alpha", action="store_true")
 args = parser.parse_args()
-if args.bg_format == "":
+if args.bg_format == "None":
     args.bg_format = "raw"
 # args.num_workers = 50
+# args.batch_size = 16
 # args.gpu = 1
 # args.data_path = "/home/wg25r/fastdata/CDNet"
 if args.gpus != "-1":
@@ -125,22 +128,22 @@ class MyDataset(torch.utils.data.Dataset):
         self.ignore_after = 40  
         self.space_trans = torchvision.transforms.v2.Compose([
             # torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomResizedCrop(args.image_size, scale=(1 - args.base_aug_spice/4, 2))], p=args.base_aug_spice),
-            torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomResizedCrop(args.image_size, scale=((0.1 if args.strong_crop else 0.8), 2))], p=args.base_aug_spice),
+            torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomResizedCrop(args.image_size, scale=(0.5, 2))], p=args.base_aug_spice),
             torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomHorizontalFlip(0.5)], p=args.base_aug_spice),
-            torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomRotation(50)], p=args.base_aug_spice), 
-            torchvision.transforms.v2.RandomApply(  
-                [torchvision.transforms.v2.ElasticTransform(alpha=50)], p=args.base_aug_spice 
-            ),
+            torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomRotation((-10,10))], p=args.base_aug_spice), 
+            torchvision.transforms.v2.RandomApply(    
+                [torchvision.transforms.v2.ElasticTransform(alpha=(5, 20))], p=args.base_aug_spice 
+            ), 
             torchvision.transforms.v2.RandomApply( 
                 [torchvision.transforms.v2.RandomPerspective()], p=args.base_aug_spice 
             ),
             torchvision.transforms.v2.RandomApply( 
-                [torchvision.transforms.v2.RandomAffine(30,  scale=(0.8, 1.1))], p=args.base_aug_spice
+                [torchvision.transforms.v2.RandomAffine((-30, 30),  scale=(0.7, 1.2))], p=args.base_aug_spice
             ),            
         ])
         # mean for RGB RGB RGB 3 images
         if not args.single_bg:
-            if args.use_optical_flow:
+            if args.use_optical_flow: 
                 self.mean = torch.tensor([0.485, 0.456, 0.406, 0.485, 0.456, 0.406, 0.485, 0.456, 0.406, 0.485, 0.456, 0.406])
                 self.std = torch.tensor([0.229, 0.224, 0.225, 0.229, 0.224, 0.225, 0.229, 0.224, 0.225, 0.229, 0.224, 0.225])
             else:
@@ -156,7 +159,7 @@ class MyDataset(torch.utils.data.Dataset):
             self.sperate_aug = torchvision.transforms.v2.Compose([
                 torchvision.transforms.v2.RandomResizedCrop(args.image_size, scale=(0.95, 1.05)),
                 torchvision.transforms.v2.RandomPerspective(0.1),
-                torchvision.transforms.v2.RandomRotation(10),
+                torchvision.transforms.v2.RandomRotation((-10, 10)),
                 torchvision.transforms.v2.ColorJitter(0.1, 0.1, 0.1, 0.1), 
                 torchvision.transforms.v2.RandomApply(
                     [torchvision.transforms.v2.ElasticTransform(alpha=5)], p=0.1
@@ -198,16 +201,25 @@ class MyDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):  
         filename = self.images[idx]
-
-        current_frame = cv2.resize(cv2.imread(f"{self.datapath}/in/{filename}"), (args.image_size, args.image_size))
+        # keep RGBA
+        current_frame = cv2.resize(cv2.imread(f"{self.datapath}/in/{filename}", cv2.IMREAD_UNCHANGED), (args.image_size, args.image_size))
+        if args.only_alpha:
+            current_frame = current_frame[:,:,3][:,:,None]
+            current_frame = np.concatenate([current_frame, current_frame, current_frame], axis=2)
         long_bg = cv2.resize(cv2.imread(f"{self.datapath}/{args.long_name}/{filename}"), (args.image_size, args.image_size))
         if not args.single_bg:
             short_bg = cv2.resize(cv2.imread(f"{self.datapath}/{args.short_name}/{filename}"), (args.image_size, args.image_size)) 
         else:
             short_bg = np.zeros_like(long_bg)
+        current_frame = cv2.cvtColor(current_frame, cv2.COLOR_BGR2RGB)
+        long_bg = cv2.cvtColor(long_bg, cv2.COLOR_BGR2RGB)
+        short_bg = cv2.cvtColor(short_bg, cv2.COLOR_BGR2RGB)
+        
         if args.bg_format == "difference":
-            short_bg = current_frame - long_bg
-            long_bg = current_frame - long_bg
+            short_bg = np.abs((current_frame.astype(float) - short_bg.astype(float)))
+            long_bg = np.abs( (current_frame.astype(float) - long_bg.astype(float)))
+            # print(short_bg.min(), short_bg.max())
+            # print(long_bg.min(), long_bg.max()) zhiqiandifferenceyemeiwentijiushifloatzhihou
             # short_bg = (short_bg - short_bg.min()) / (short_bg.max() - short_bg.min())
             # long_bg = (long_bg - long_bg.min()) / (long_bg.max() - long_bg.min())
 
@@ -215,10 +227,6 @@ class MyDataset(torch.utils.data.Dataset):
         if args.use_optical_flow:
             flow = cv2.imread(f"{self.datapath}/flow/{filename}")
             flow = cv2.resize(flow, (args.image_size, args.image_size)) 
-        current_frame = cv2.cvtColor(current_frame, cv2.COLOR_BGR2RGB)
-        long_bg = cv2.cvtColor(long_bg, cv2.COLOR_BGR2RGB)
-        short_bg = cv2.cvtColor(short_bg, cv2.COLOR_BGR2RGB)
-        
         label = (label_ >= 250) * 255.0 # because there is resave so we need this
         # ROI =  (label_ != 85) * 255.0 
         ROI = ((80 >= label_) | (label_ >= 90)) #need it !=85 so need 80 >= label and also | huiyihuijingshucheng meng 
@@ -234,7 +242,7 @@ class MyDataset(torch.utils.data.Dataset):
         short_bg = torch.tensor(short_bg).permute(2,0,1)
         label = torch.tensor(label).permute(2,0,1)
         if args.use_optical_flow:
-            flow = torch.tensor(flow).permute(2,0,1)
+            flow = torch.tensor(flow).permute(2,0,1) 
         ROI = torch.tensor(ROI).float()
         if args.use_optical_flow:
             X = torch.cat([current_frame, long_bg, short_bg, flow, ROI], axis=0)
@@ -270,7 +278,7 @@ class MyDataset(torch.utils.data.Dataset):
         Y = torchvision.transforms.functional.resize(Y, (args.image_size//4, args.image_size//4))[0] > 0
         ROI = torchvision.transforms.functional.resize(ROI, (args.image_size//4, args.image_size//4))[0] > 0
         Y = Y.float() #if not this loss will be issue, maybe from the resize, identical not 0
-        X[X<0]=0
+        # X[X<0]=0
         # print(X.shape, Y.shape, ROI.shape) 
         if self.mode != "train":
             return X, Y, ROI, filename
@@ -491,60 +499,32 @@ class MyModel(nn.Module):
         self.upsample = nn.Upsample(scale_factor=2, mode='bicubic')
 
         self.head = nn.Sequential(
-            nn.Conv2d(384, 1, 5, padding='same'),
+            nn.Conv2d(384 + 32 if args.texture else 384, 1, 5, padding='same'),
         )   
-        self.textual_encoder = nn.AvgPool2d(4)
+        if args.texture:
+            self.textual_encoder = nn.Sequential(
+                nn.Conv2d(3, 16, 3, padding='same'),
+                nn.ReLU(),
+                nn.Conv2d(16, 32, 3, padding='same'),
+                nn.ReLU(),
+                nn.AvgPool2d(4),
+            )
+            
         if args.backbone == "segformer":
             self.projection = nn.Linear(256, 384)
 
     def forward(self, current_frame, long_bg, short_bg):
             # short_bg could contain flow as well 
-            if args.backbone == "dino": 
-                # # warning dino is not fully implemented, yellow text
-                # print("\033[93m" + "Warning: DINO is not fully implemented, the output may not be as expected" + "\033[0m")
-                # long_bg = self.backbone.get_intermediate_layers(long_bg, n=last_n)
-                # short_bg = self.backbone.get_intermediate_layers(short_bg, n=last_n)
-                # current_frame = self.backbone.get_intermediate_layers(current_frame, n=last_n)
-                # current_frame = torch.concatenate(current_frame, dim=-1)
-                # long_bg = torch.concatenate(long_bg, dim=-1)
-                # short_bg = torch.concatenate(short_bg, dim=-1)
-                # current_frame = current_frame[:,1:,:]
-                # long_bg = long_bg[:,1:,:] 
-                # short_bg = short_bg[:,1:,:]
-
-                # if args.fusion == "cross_attention":
-                #     current_frame = self.bca(current_frame, long_bg, short_bg)
-                #     current_frame = self.bca2(current_frame, long_bg, short_bg)
-                #     if args.parallel_bca != 0:
-                #         current_frames = []
-                #         for bca in self.bcas:
-                #             current_frames.append(bca(current_frame, long_bg, short_bg))
-                #         current_frame = self.down_fc(torch.cat(current_frames, dim=-1))
-
-                #         current_frames = []
-                #         for bca in self.bcas2:
-                #             current_frames.append(bca(current_frame, long_bg, short_bg))
-                #         current_frame = self.down_fc2(torch.cat(current_frames, dim=-1))
-                # elif args.fusion == "concat":
-                #     current_frame = self.fusion(torch.cat([current_frame, long_bg, short_bg], dim=-1))
-
-                # if args.decoder == "conv":
-                #     current_frame = current_frame.reshape(long_bg.shape[0], args.image_size//8, args.image_size//8, 384).permute(0,3,1,2)
-                #     current_frame = self.decoder(current_frame) + current_frame
-                # elif args.decoder == "transformer":
-                #     current_frame = self.decoder(current_frame)
-                #     current_frame = current_frame.reshape(long_bg.shape[0], args.image_size//8, args.image_size//8, 384).permute(0,3,1,2)
-                # else:
-                #     current_frame = current_frame.reshape(long_bg.shape[0], args.image_size//8, args.image_size//8, 384).permute(0,3,1,2)
-                # current_frame = self.upsample(current_frame)
-                # return self.head(current_frame)     
+            if args.backbone == "dino":   
                 raise NotImplementedError("DINO is not fully implemented")
         
             else:
                 # print(long_bg.shape, short_bg.shape, current_frame.shape)
                 if args.fusion == "early":
+                    if args.texture:
+                        raw_current_frame = current_frame
                     feature = torch.cat([current_frame, long_bg, short_bg], dim=1)
-           
+                    
                     current_frame = self.backbone(feature).logits.squeeze(1).flatten(-2, -1)
                     current_frame = self.proj_early(current_frame).permute(0, 2, 1)
                 elif args.fusion == "slow": 
@@ -570,6 +550,7 @@ class MyModel(nn.Module):
                     else:
                         current_frame = self.fusion(torch.cat([current_frame, long_bg, short_bg], dim=-1))
 
+
                 if args.decoder == "conv":
                     current_frame = current_frame.reshape(long_bg.shape[0], args.image_size//4, args.image_size//4, 384).permute(0,3,1,2)
                     current_frame = self.decoder(current_frame) + current_frame
@@ -579,6 +560,9 @@ class MyModel(nn.Module):
                 else:
                     # print(current_frame.shape)
                     current_frame = current_frame.reshape(long_bg.shape[0], args.image_size//4, args.image_size//4, 384).permute(0,3,1,2)
+                if args.texture:
+                    current_frame = torch.cat([current_frame, self.textual_encoder(raw_current_frame)], dim=1) 
+                
                 return self.head(current_frame) 
                 
 
@@ -738,7 +722,6 @@ while 1:
                 conf_score = torch.sigmoid(pred) 
                 conf_score = conf_score[conf_score > 0.5].mean() +  (1 - conf_score[~(conf_score > 0.5)]).mean()
                 conf_score = conf_score/2
-                
                 total_loss /= len(val_dataloader) 
                 if args.normalize_image:
                     mean = np.array([0.485, 0.456, 0.406])
@@ -770,6 +753,7 @@ while 1:
 
                     write_log(f"Epoch {epoch} Val Loss {round(total_loss, 3)} Val f1 {round(total_f1, 3)}")
                     write_log(f"Epoch {epoch} Train Loss {round(np.mean(train_running_loss), 3)} Train f1 {round(np.mean(train_running_f1), 3)}")
+                    write_log(f"Val conf score, {conf_score}")
                     train_running_loss = []
                     train_running_iou = []
                     train_running_f1 = []
@@ -793,10 +777,13 @@ while 1:
         iou = (((pred > 0) & (Y.cuda().unsqueeze(1) > 0)).float().mean()  + 1e-6 )/(((pred > 0) | (Y.cuda().unsqueeze(1) > 0)) + 1e-6).float().mean()
         f1 = (2 * ((pred > 0) & (Y.cuda().unsqueeze(1) > 0)).float().sum() + 1e-6)/((pred > 0).float().sum() + (Y.cuda().unsqueeze(1) > 0).float().sum() + 1e-6)
         loss.backward()  
-        if i%1000 == 1: 
-            grads, params = watch(mymodel)
-            wandb.log({"grads": wandb.Histogram(grads.cpu().detach().numpy()), "params": wandb.Histogram(params.cpu().detach().numpy())})
-            write_log(f"Grad Mean: {round(grads.abs().mean().item(), 4)} Grad Std: {round(grads.std().item(), 4)} Param abs().: {round(params.abs().mean().item(), 4)} Param Std: {round(params.std().item(), 4)}") 
+        if i%1000 == 1:
+            try:
+                grads, params = watch(mymodel)
+                write_log(f"Grad Mean: {round(grads.abs().mean().item(), 4)} Grad Std: {round(grads.std().item(), 4)} Param abs.: {round(params.abs().mean().item(), 4)} Param Std: {round(params.std().item(), 4)}") 
+                wandb.log({"grads": wandb.Histogram(grads.cpu().detach().numpy()), "params": wandb.Histogram(params.cpu().detach().numpy())})
+            except:
+                pass
             # write_log(f"Grad Mean: {grads.mean()} Grad Std: {grads.std()} Param Mean: {params.mean()} Param Std: {params.std()}")  wrong
         optimizer.step() 
         wandb.log({"loss": loss.item(), "acc": acc.float().mean().item(), "iou": iou.float(), "lr": optimizer.param_groups[0]["lr"]}) # cannot do iou mean here otherwise it average non overlapping area
