@@ -128,19 +128,24 @@ class MyDataset(torch.utils.data.Dataset):
         self.ignore_after = 40  
         self.space_trans = torchvision.transforms.v2.Compose([
             # torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomResizedCrop(args.image_size, scale=(1 - args.base_aug_spice/4, 2))], p=args.base_aug_spice),
-            torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomResizedCrop(args.image_size, scale=(0.5, 2))], p=args.base_aug_spice),
             torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomHorizontalFlip(0.5)], p=args.base_aug_spice),
             torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomRotation((-10,10))], p=args.base_aug_spice), 
-            torchvision.transforms.v2.RandomApply(    
+            torchvision.transforms.v2.RandomApply(     
                 [torchvision.transforms.v2.ElasticTransform(alpha=(5, 20))], p=args.base_aug_spice 
             ), 
             torchvision.transforms.v2.RandomApply( 
                 [torchvision.transforms.v2.RandomPerspective()], p=args.base_aug_spice 
             ),
             torchvision.transforms.v2.RandomApply( 
-                [torchvision.transforms.v2.RandomAffine((-30, 30),  scale=(0.7, 1.2))], p=args.base_aug_spice
-            ),            
-        ])
+                [torchvision.transforms.v2.RandomAffine((-10, 10),  scale=(0.7, 1.2))], p=args.base_aug_spice
+            ),      
+            torchvision.transforms.v2.RandomApply(
+                [torchvision.transforms.v2.GaussianBlur(5, sigma=(0.1, 2.0))], p=args.base_aug_spice/4
+            ),
+            torchvision.transforms.v2.RandomErasing(0.3),
+            torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.RandomResizedCrop(args.image_size, scale=(0.5, 2))], p=args.base_aug_spice),
+
+        ]) 
         # mean for RGB RGB RGB 3 images
         if not args.single_bg:
             if args.use_optical_flow: 
@@ -157,14 +162,12 @@ class MyDataset(torch.utils.data.Dataset):
 
         if args.use_bsvunet2_style_dataaug:
             self.sperate_aug = torchvision.transforms.v2.Compose([
-                torchvision.transforms.v2.RandomResizedCrop(args.image_size, scale=(0.95, 1.05)),
-                torchvision.transforms.v2.RandomPerspective(0.1),
-                torchvision.transforms.v2.RandomRotation((-10, 10)),
+                torchvision.transforms.v2.RandomResizedCrop(args.image_size, scale=(0.99, 1.01)),
+                torchvision.transforms.v2.RandomRotation((-5, 5)),
                 torchvision.transforms.v2.ColorJitter(0.1, 0.1, 0.1, 0.1), 
                 torchvision.transforms.v2.RandomApply(
                     [torchvision.transforms.v2.ElasticTransform(alpha=5)], p=0.1
                 ),
-                torchvision.transforms.v2.RandomApply([self.pan], p=0.1),
                 torchvision.transforms.v2.RandomApply(
                     [
                         torchvision.transforms.v2.GaussianBlur(5, sigma=(0.1, 2.0))
@@ -177,19 +180,39 @@ class MyDataset(torch.utils.data.Dataset):
             torchvision.transforms.v2.RandomApply([torchvision.transforms.v2.GaussianBlur(3, sigma=(0.1, 2.0))], p=0.4)
         ])
         self.pancrop = torchvision.transforms.RandomResizedCrop(args.image_size, scale=(0.9, 1.1))
-        self.panrotate = torchvision.transforms.RandomRotation(20)
+        self.panrotate = torchvision.transforms.RandomRotation((0, 20))
 
-    def pan(self, img): 
-        shifteds = []
-        for i in range(random.randint(10, 60)):
-            shift = random.randint(20, 30)
-            tmp = torch.roll(img, shifts=shift, dims=1) 
-            tmp = self.pancrop(tmp)
-            if args.panrotate:
-                tmp = self.panrotate(tmp)
-            shifteds.append(tmp)
-        return torch.stack(shifteds).mean(0)
+    def strong_pan(self, img): 
+        shifteds = [img] 
+        img2 = img
+        for i in range(random.randint(5, 60)):
+            shiftx = random.randint(0, 20)
+            # shifty = random.random() * 20
+            # tmp = torch.roll(img, shifts=shift, dims=1) 
+            img = torchvision.transforms.functional.affine(img, angle=0, translate=(shiftx, 0), scale=1, shear=0)
+            img2 = torchvision.transforms.functional.affine(img2, angle=0, translate=(-shiftx, 0), scale=1, shear=0)
+            # if args.panrotate: 
+            #     img = self.panrotate(img)
+            shifteds.append(img) 
+            shifteds.append(img2)
+
+        return torch.stack(shifteds).median(0).values
             
+    def weak_pan(self, img):
+        shifteds = [img] 
+        img2 = img
+        for i in range(random.randint(5, 20)):
+            shiftx = random.randint(0, 20)
+            # shifty = random.random() * 20
+            # tmp = torch.roll(img, shifts=shift, dims=1) 
+            img = torchvision.transforms.functional.affine(img, angle=0, translate=(shiftx, 0), scale=1, shear=0)
+            img2 = torchvision.transforms.functional.affine(img2, angle=0, translate=(-shiftx, 0), scale=1, shear=0)
+            # if args.panrotate: 
+            #     img = self.panrotate(img)
+            shifteds.append(img) 
+            shifteds.append(img2)
+
+        return torch.stack(shifteds).median(0).values
 
 
     def __len__(self): 
@@ -249,20 +272,27 @@ class MyDataset(torch.utils.data.Dataset):
         else:
             X = torch.cat([current_frame, long_bg, short_bg, ROI], axis=0)
         
-        Y = label.max(0)[0][None,:,:] 
+        Y = label.max(0)[0][None,:,:]
 
         if self.mode == "train":  
+            X = X/255.0
+            Y = Y/255.0
+            if args.use_bsvunet2_style_dataaug:
+                # X[:3] = self.sperate_aug(X[:3]) # do not do for current since it needss to be used for output location
+                X[3:6] = self.sperate_aug(X[3:6])
+                do_pan = random.random() < 0.2
+                if do_pan:
+                    X[3:6] = self.strong_pan(X[3:6]) 
+                if not args.single_bg:
+                    X[6:9] = self.sperate_aug(X[6:9])
+                    if do_pan:
+                        X[6:9] = self.weak_pan(X[6:9]) 
             # X = self.color_trans(X) 
             YX = torch.cat((Y, X), axis=0) 
             # if args.use_base_aug:
             YX = self.space_trans(YX)
-            Y = YX[:1]/255.0  
-            X = YX[1:-1]/255.0
-            if args.use_bsvunet2_style_dataaug:
-                # X[:3] = self.sperate_aug(X[:3]) # do not do for current since it needss to be used for output location
-                X[3:6] = self.sperate_aug(X[3:6])
-                if not args.single_bg:
-                    X[6:9] = self.sperate_aug(X[6:9]) 
+            Y = YX[:1]
+            X = YX[1:-1]
 
             ROI = YX[-1] > 0
             ROI = ROI.float().unsqueeze(0)
@@ -479,10 +509,10 @@ class MyModel(nn.Module):
         if args.decoder == "conv":
             self.decoder = nn.Sequential(
                 nn.Conv2d(384, args.ffn_dim, 3, padding='same'),
-                nn.Dropout(args.dropout),
+                nn.Dropout2d(args.dropout),
                 nn.GELU(), 
                 nn.Conv2d(args.ffn_dim, args.ffn_dim, 3, padding='same'),
-                nn.Dropout(args.dropout),
+                nn.Dropout2d(args.dropout),
                 nn.GELU(),
                 nn.Conv2d(args.ffn_dim, 384, 3, padding='same'),
             )
