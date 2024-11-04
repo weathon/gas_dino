@@ -37,7 +37,7 @@ parser.add_argument("--val_size", type=int, default=2048)
 parser.add_argument("--save_path", type=str, default=f"{random.randint(10000000,99999999)}.pth")
 parser.add_argument("--use_optical_flow", action="store_true")
 parser.add_argument("--strong_crop", action="store_true")
-parser.add_argument("--data_path", type=str, default="/home/wg25r/fastdata/CDNet")  
+parser.add_argument("--data_path", type=str, default="default")  
 parser.add_argument("--single_bg", action="store_true")
 parser.add_argument("--long_name", type=str, default="long")
 parser.add_argument("--short_name", type=str, default="short")
@@ -45,7 +45,19 @@ parser.add_argument("--bg_format", type=str, default="raw", choices=["raw", "dif
 parser.add_argument("--texture", action="store_true")
 parser.add_argument("--panrotate", action="store_true")
 parser.add_argument("--only_alpha", action="store_true")
+parser.add_argument("--fold", type=int, default=1)
+parser.add_argument("--use_preaug", action="store_true")
+parser.add_argument("--project_name", type=str, default="MEOW Fold 2")
+
+
+    
 args = parser.parse_args()
+if not args.use_preaug and args.data_path == "default":
+    args.data_path = "/home/wg25r/fastdata/CDNet"
+
+if args.use_preaug and args.data_path == "default":
+    args.data_path = "/home/wg25r/fastdata/preaug_cdnet"
+
 if args.bg_format == "None":
     args.bg_format = "raw"
 # args.num_workers = 50
@@ -96,17 +108,17 @@ class MyDataset(torch.utils.data.Dataset):
     def __init__(self, mode="train"):
         print("Using MyDataset")
         self.mode = mode
-        self.datapath = args.data_path
+        self.datapath = args.data_path if mode == "train" else "/home/wg25r/fastdata/CDNet"
        
         if mode == "train":
-            with open(f"{self.datapath}/train.txt") as f:
+            with open(f"/home/wg25r/fastdata/CDNet/train_{args.fold}.txt") as f:
                 self.images = f.read().split("\n")
         else: 
             if not args.use_train_as_val:
-                with open(f"{self.datapath}/val.txt") as f:
+                with open(f"/home/wg25r/fastdata/CDNet/val_{args.fold}.txt") as f:
                     self.images = f.read().split("\n")
             else:
-                with open(f"{self.datapath}/train.txt") as f:
+                with open(f"/home/wg25r/fastdata/CDNet/train_{args.fold}.txt") as f:
                     self.images = f.read().split("\n")
             random.seed(19890604)
             if args.val_size > len(self.images):
@@ -116,11 +128,32 @@ class MyDataset(torch.utils.data.Dataset):
                 args.val_size = len(self.images)
             self.images = random.sample(self.images, args.val_size)
         
+        if mode == "train" and args.use_preaug:
+            tmp = []
+            for i in self.images:
+                tmp.append(f"0_{i}")
+                tmp.append(f"1_{i}")
+                tmp.append(f"2_{i}")
+                tmp.append(f"3_{i}")
+                tmp.append(f"4_{i}")
+                tmp.append(f"5_{i}")
+            self.images = tmp
+    
 
-        with open(f"{self.datapath}/train.txt") as f:
+                
+        with open(f"/home/wg25r/fastdata/CDNet/train_{args.fold}.txt") as f:
             train_ = f.read().split("\n") 
 
-        with open(f"{self.datapath}/val.txt") as f:
+        # show first ROI for debug
+        if self.mode == "train" and args.show_sample:
+            roi = cv2.imread(f"{self.datapath}/ROI/{self.images[0]}")
+            cv2.imwrite("roi.png", roi)
+            print(f"max ROI: {roi.max()}, min ROI: {roi.min()}")
+            long = cv2.imread(f"{self.datapath}/long/{self.images[0]}")
+            cv2.imwrite("long.png", long)
+
+
+        with open(f"/home/wg25r/fastdata/CDNet/val_{args.fold}.txt") as f:
             val_ = f.read().split("\n") 
 
         assert set(train_).intersection(set(val_)) == set(), "Train and Val overlap: " + str(set(train_).intersection(set(val_)))
@@ -170,9 +203,9 @@ class MyDataset(torch.utils.data.Dataset):
                 ),
                 torchvision.transforms.v2.RandomApply(
                     [
-                        torchvision.transforms.v2.GaussianBlur(5, sigma=(0.1, 2.0))
-                    ], 0.05
-                )
+                        torchvision.transforms.v2.GaussianBlur((5, 31), sigma=(0.1, 2.0))
+                    ], 0.3 
+                ),
             ])
 
 
@@ -225,6 +258,7 @@ class MyDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx):  
         filename = self.images[idx]
         # keep RGBA
+        # print(f"{self.datapath}/in/{filename}")
         current_frame = cv2.resize(cv2.imread(f"{self.datapath}/in/{filename}", cv2.IMREAD_UNCHANGED), (args.image_size, args.image_size))
         if args.only_alpha:
             current_frame = current_frame[:,:,3][:,:,None]
@@ -237,27 +271,25 @@ class MyDataset(torch.utils.data.Dataset):
         current_frame = cv2.cvtColor(current_frame, cv2.COLOR_BGR2RGB)
         long_bg = cv2.cvtColor(long_bg, cv2.COLOR_BGR2RGB)
         short_bg = cv2.cvtColor(short_bg, cv2.COLOR_BGR2RGB)
-        
         if args.bg_format == "difference":
             short_bg = np.abs((current_frame.astype(float) - short_bg.astype(float)))
             long_bg = np.abs( (current_frame.astype(float) - long_bg.astype(float)))
-            # print(short_bg.min(), short_bg.max())
-            # print(long_bg.min(), long_bg.max()) zhiqiandifferenceyemeiwentijiushifloatzhihou
-            # short_bg = (short_bg - short_bg.min()) / (short_bg.max() - short_bg.min())
-            # long_bg = (long_bg - long_bg.min()) / (long_bg.max() - long_bg.min())
 
         label_ = cv2.imread(f"{self.datapath}/gt/{filename}")
         if args.use_optical_flow:
             flow = cv2.imread(f"{self.datapath}/flow/{filename}")
             flow = cv2.resize(flow, (args.image_size, args.image_size)) 
-        label = (label_ >= 250) * 255.0 # because there is resave so we need this
-        # ROI =  (label_ != 85) * 255.0 
-        ROI = ((80 >= label_) | (label_ >= 90)) #need it !=85 so need 80 >= label and also | huiyihuijingshucheng meng 
-        ROI = ROI & (((165 >= label_) | (label_ >= 175)))
-        ROI = ROI * 255.0
+        label = (label_ >= 250) * 255.0 
+        if args.use_preaug and self.mode == "train":
+            ROI = cv2.imread(f"{self.datapath}/ROI/{filename}")
+        else:
+            ROI = ((80 >= label_) | (label_ >= 90))
+            ROI = ROI & (((165 >= label_) | (label_ >= 175)))
+            ROI = ROI * 255.0
 
         # ROI = (80 <= label_ <= 90) * 255.0
-        ROI = cv2.resize(ROI, (args.image_size, args.image_size)).mean(2)[None,:,:]
+        ROI = cv2.resize(ROI, (args.image_size, args.image_size), interpolation=cv2.INTER_NEAREST).max(2)
+        ROI = ROI[None,:,:]
         label = cv2.resize(label, (args.image_size, args.image_size))
 
         current_frame = torch.tensor(current_frame).permute(2,0,1)
@@ -267,37 +299,60 @@ class MyDataset(torch.utils.data.Dataset):
         if args.use_optical_flow:
             flow = torch.tensor(flow).permute(2,0,1) 
         ROI = torch.tensor(ROI).float()
-        if args.use_optical_flow:
-            X = torch.cat([current_frame, long_bg, short_bg, flow, ROI], axis=0)
+
+        if not args.single_bg:
+            if args.use_optical_flow:
+                X = torch.cat([current_frame, long_bg, short_bg, flow, ROI], axis=0)
+            else:
+                X = torch.cat([current_frame, long_bg, short_bg, ROI], axis=0)
         else:
-            X = torch.cat([current_frame, long_bg, short_bg, ROI], axis=0)
+            if args.use_optical_flow:
+                X = torch.cat([current_frame, long_bg, flow], axis=0)
+            else:
+                X = torch.cat([current_frame, long_bg], axis=0)
         
         Y = label.max(0)[0][None,:,:]
 
         if self.mode == "train":  
-            X = X/255.0
-            Y = Y/255.0
-            if args.use_bsvunet2_style_dataaug:
-                # X[:3] = self.sperate_aug(X[:3]) # do not do for current since it needss to be used for output location
-                X[3:6] = self.sperate_aug(X[3:6])
-                do_pan = random.random() < 0.2
-                if do_pan:
-                    X[3:6] = self.strong_pan(X[3:6]) 
-                if not args.single_bg:
-                    X[6:9] = self.sperate_aug(X[6:9])
+            if not args.use_preaug:
+                X = X/255.0
+                Y = Y/255.0
+                if args.use_bsvunet2_style_dataaug:
+                    # X[:3] = self.sperate_aug(X[:3]) # do not do for current since it needss to be used for output location
+                    X[3:6] = self.sperate_aug(X[3:6])
+                    do_pan = random.random() < 0.2
                     if do_pan:
-                        X[6:9] = self.weak_pan(X[6:9]) 
-            # X = self.color_trans(X) 
-            YX = torch.cat((Y, X), axis=0) 
-            # if args.use_base_aug:
-            YX = self.space_trans(YX)
-            Y = YX[:1]
-            X = YX[1:-1]
+                        X[3:6] = self.strong_pan(X[3:6]) 
+                    if not args.single_bg:
+                        X[6:9] = self.sperate_aug(X[6:9])
+                        if do_pan:
+                            X[6:9] = self.weak_pan(X[6:9]) 
+                # X = self.color_trans(X) 
+                YX = torch.cat((Y, X), axis=0) 
+                # if args.use_base_aug:
+                YX = self.space_trans(YX)
+                Y = YX[:1]
+                X = YX[1:-1]
+                ROI = YX[-1] > 0
+                ROI = ROI.float().unsqueeze(0)
+            else:
 
-            ROI = YX[-1] > 0
-            ROI = ROI.float().unsqueeze(0)
-            X += torch.randn(X.shape) * 0.008 
-            X += torch.tensor(cv.resize(np.random.normal(0, 0.01, (10, 10)), X.shape[1:])).float()
+                X = X[:-1]/255.0
+                Y = Y/255.0 
+
+                ROI = ROI > 128 # use 128 will be fine 
+                ROI = ROI * 1.0
+                # pylab.clf() 
+                # ROI[0,0,0]=0
+                # pylab.imshow(ROI.mean(0)) 
+                # pylab.savefig("roi2.png")
+                # print(f"max ROI: {ROI.max()}, min ROI: {ROI.min()}, median ROI: {ROI.median()}")    
+                # 5/0
+
+
+            X += torch.randn(X.shape) * 0.008
+            X += torch.tensor(cv.resize(np.random.normal(0, 0.02, (10, 10, X.shape[0])), X.shape[1:])).float().permute(2, 0, 1)
+            # X += torch.tensor(cv.resize(np.random.normal(0, 0.01, (10, 10)), X.shape[1:])).float()
             X *= 1 + torch.randn(X.shape[0])[:,None,None] * 0.1
         else:
             X = X[:-1]/255.0
@@ -494,7 +549,9 @@ class MyModel(nn.Module):
 
             self.proj_early = torch.nn.Sequential(
                 torch.nn.Dropout1d(args.dropout),
-                torch.nn.Conv1d(256, 384, 1)
+                torch.nn.Conv1d(256, 384, 1),
+                torch.nn.Dropout1d(args.dropout),
+                torch.nn.ReLU(),
             )
         elif args.fusion == "slow":
             from transformers.models.segformer import TwoStreamSegformerEncoder, SegformerConfig, TwoStreamSegformerModel, TwoStreamSegformerForSemanticSegmentation
@@ -529,7 +586,7 @@ class MyModel(nn.Module):
         self.upsample = nn.Upsample(scale_factor=2, mode='bicubic')
 
         self.head = nn.Sequential(
-            nn.Conv2d(384 + 32 if args.texture else 384, 1, 5, padding='same'),
+            nn.Conv2d(384 + 32 if args.texture else 384, 1, 1, padding='same'),
         )   
         if args.texture:
             self.textual_encoder = nn.Sequential(
@@ -620,18 +677,22 @@ if args.show_sample:
         long_bg = X[3:6].permute(1,2,0).numpy()
         short_bg = X[6:9].permute(1,2,0).numpy()
         Y = Y.numpy()
-        pylab.subplot(1, 4, 1)
+        pylab.figure(figsize=(20, 4))
+        pylab.subplot(1, 5, 1)
         pylab.imshow(current)
         pylab.title("current")
-        pylab.subplot(1, 4, 2)
+        pylab.subplot(1, 5, 2)
         pylab.imshow(long_bg)
         pylab.title("long_bg")
-        pylab.subplot(1, 4, 3)
+        pylab.subplot(1, 5, 3)
         pylab.imshow(short_bg)
         pylab.title("short_bg")
-        pylab.subplot(1, 4, 4)
+        pylab.subplot(1, 5, 4)
         pylab.imshow(Y)
         pylab.title("label")
+        pylab.subplot(1, 5, 5)
+        pylab.imshow(ROI)
+        pylab.title("ROI")
         pylab.savefig(f"train_images_sample/{i}.png")
 
 
@@ -663,11 +724,20 @@ def f1_loss(pred, target):
 
 # %%
 import wandb
+from transformers import AutoConfig
 if args.backbone == "dino":
     mymodel = torch.nn.DataParallel(MyModel(vits8).cuda()) 
 elif args.backbone == "segformer":
     from transformers import SegformerImageProcessor, SegformerForSemanticSegmentation
-    backbone = SegformerForSemanticSegmentation.from_pretrained("nvidia/segformer-b1-finetuned-ade-512-512")
+    print("Changing Config of a pretrained model")
+    configuration = AutoConfig.from_pretrained("nvidia/segformer-b1-finetuned-ade-512-512")
+    # hidden_dropout_prob = 0.0attention_probs_dropout_prob = 0.0classifier_dropout_prob = 0.1initializer_range = 0.02drop_path_rate = 0.1
+    configuration.hidden_dropout_prob = args.dropout
+    configuration.attention_probs_dropout_prob = args.dropout
+    configuration.classifier_dropout_prob = args.dropout
+    configuration.drop_path_rate = 0.1
+    backbone = SegformerForSemanticSegmentation.from_pretrained("nvidia/segformer-b1-finetuned-ade-512-512", config=configuration)
+    
     backbone.decode_head.classifier = torch.nn.Identity()
 
     mymodel = torch.nn.DataParallel(MyModel(backbone).cuda())
@@ -677,10 +747,13 @@ else:
 if args.load_checkpoint:
     mymodel.load_state_dict(torch.load(args.load_checkpoint))
     print("Loaded " + args.load_checkpoint)
-
+                        
 optimizer = torch.optim.AdamW(mymodel.parameters(), lr=args.lr, weight_decay=args.weight_decay)
-scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.num_epochs, eta_min=args.lr/8) 
-wandb.init(resume=args.resume, config = args)
+scheduler1 = torch.optim.lr_scheduler.LambdaLR(optimizer, lambda epoch: 1)
+# scheduler1 = torch.optim.lr_scheduler.ConstantLR(optimizer, 4)
+scheduler2 = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, args.num_epochs) 
+scheduler = torch.optim.lr_scheduler.SequentialLR(optimizer, [scheduler1, scheduler2], milestones=[120])
+wandb.init(resume=args.resume, config = args, project=args.project_name)
 
 # assert iou_loss(torch.tensor([10000.0]), torch.tensor([1.0])) == 0, "iou loss not 0, but " + str(iou_loss(torch.tensor([1.0]), torch.tensor([1.0])))
 # %%
@@ -688,13 +761,7 @@ if args.loss_fn == "iou":
     loss_fn = iou_loss
 elif args.loss_fn == "f1":
     loss_fn = f1_loss
-else:
-    raise NotImplementedError("Loss function not implemented, so I am lost!")
-epoch = 0
-
-
-
-import tqdm
+    
 import sys
 epoch = 0
 train_running_loss = [1]
